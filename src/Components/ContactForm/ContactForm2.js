@@ -2,14 +2,16 @@ import { nanoid } from "nanoid";
 import s from "./ContactForm.module.scss";
 import { useState } from "react";
 
-export default function ContactForm(onSubmit) {
+export default function ContactForm() {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
-  const handleChangeForm = (target) => {
-    // const { value } = target;
-    setName(name);
-    setNumber(number);
+  const handleChangeName = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleChangeNumber = (e) => {
+    setNumber(e.target.value);
   };
 
   const handleFormSubmit = (e) => {
@@ -17,13 +19,28 @@ export default function ContactForm(onSubmit) {
 
     const { onAdd } = this.props;
 
-    // const isValidatedForm = validateForm();
+    const isValidatedForm = validateForm();
 
-    // if (!isValidatedForm) return;
+    if (!isValidatedForm) return;
 
     onAdd({ id: nanoid(), name, number });
 
-    this.resetForm();
+    resetForm();
+  };
+
+  const validateForm = () => {
+    const { onCheck } = this.props;
+
+    if (!name || !number) {
+      alert("Some filed is empty");
+      return false;
+    }
+    return onCheck(name);
+  };
+
+  const resetForm = () => {
+    setName(name);
+    setNumber(number);
   };
 
   const nameInputId = nanoid();
@@ -39,7 +56,7 @@ export default function ContactForm(onSubmit) {
           name="name"
           placeholder="Enter text"
           value={name}
-          onChange={handleChangeForm}
+          onChange={handleChangeName}
         />
 
         <p className={s.text}>Number</p>
@@ -49,7 +66,7 @@ export default function ContactForm(onSubmit) {
           name="number"
           placeholder="Enter phone number"
           value={number}
-          onChange={handleChangeForm}
+          onChange={handleChangeNumber}
         />
 
         <button className={s.btn} type="submit">

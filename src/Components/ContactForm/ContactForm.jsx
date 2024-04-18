@@ -84,20 +84,23 @@
 
 // export default ContactForm;
 
-//==========================================================================
+//===================================================================
 
 import { nanoid } from "nanoid";
 import s from "./ContactForm.module.scss";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
-export default function ContactForm(onSubmit) {
+export default function ContactForm({ onSubmit }) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
-  const handleChangeForm = (target) => {
-    // const { value } = target;
-    setName(name);
-    setNumber(number);
+  const handleChangeName = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleChangeNumber = (e) => {
+    setNumber(e.target.value);
   };
 
   const handleFormSubmit = (e) => {
@@ -105,20 +108,44 @@ export default function ContactForm(onSubmit) {
 
     const { onAdd } = this.props;
 
-    // const isValidatedForm = validateForm();
+    const isValidatedForm = validateForm();
 
-    // if (!isValidatedForm) return;
-
-    onSubmit(name);
-    setName("");
-    
-    onSubmit(number);
-    setNumber("");
+    if (!isValidatedForm) return;
 
     onAdd({ id: nanoid(), name, number });
 
-    this.resetForm();
+    onSubmit(name);
+    setName("");
+
+    onSubmit(number);
+    setNumber("");
+
+    // resetForm();
   };
+
+  const validateForm = () => {
+    const { onCheck } = this.props;
+
+    if (!name || !number) {
+      toast.warn("🦄 Wow so easy!", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      return false;
+    }
+    return onCheck(name);
+  };
+
+  // const resetForm = () => {
+  //   setName("");
+  //   setNumber("");
+  // };
 
   const nameInputId = nanoid();
   const numberInputId = nanoid();
@@ -133,7 +160,7 @@ export default function ContactForm(onSubmit) {
           name="name"
           placeholder="Enter text"
           value={name}
-          onChange={handleChangeForm}
+          onChange={handleChangeName}
         />
 
         <p className={s.text}>Number</p>
@@ -143,7 +170,7 @@ export default function ContactForm(onSubmit) {
           name="number"
           placeholder="Enter phone number"
           value={number}
-          onChange={handleChangeForm}
+          onChange={handleChangeNumber}
         />
 
         <button className={s.btn} type="submit">

@@ -1,25 +1,3 @@
-// import React from "react";
-
-// const ContactList = ({ onList }) => {
-//   return (
-//     <div>
-//       <h2>Contacts</h2>
-//       <ul>
-//         {onList.map(({ id, name, number }) => (
-//           <li key={id}>
-//             <p>
-//               {name}: {number}
-//             </p>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default ContactList;
-
-//=====================================================================================================================================================
 import React from "react";
 import s from "./ContactList.module.scss";
 
