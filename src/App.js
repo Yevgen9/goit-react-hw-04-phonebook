@@ -81,21 +81,26 @@ import ContactsList from "./Components/ContactList/ContactList";
 import Filter from "./Components/Filter/Filter";
 import "./App.module.scss";
 
+const defaultValue = [
+  { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
+  { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
+  { id: "id-3", name: "Eden Clements", number: "645-17-79" },
+  { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
+];
+
 export default function App() {
-  const [contacts, setContacts] = useState([
-    { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-    { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-    { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-    { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-  ]);
+  const [contacts, setContacts] = useState(defaultValue);
   const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem("contactsItem", JSON.stringify(contacts));
-  }, [contacts]);
+  // useEffect(() => {
+  //   localStorage.setItem("contactsItem", JSON.stringify(contacts));
+  // }, [contacts]);
 
   const handleAddContact = (newContact) =>
-    setContacts((contacts) => [...contacts, newContact]);
+    setContacts(
+      (contacts) => [...contacts, newContact],
+      localStorage.setItem("contactsItem", JSON.stringify(contacts))
+    );
 
   const handleCheckContact = (name) => {
     const isExistContact = !!contacts.find((contact) => contact.name === name);
