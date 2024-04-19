@@ -1,16 +1,18 @@
 // import React, { Component } from "react";
 // import ContactForm from "./Components/ContactForm/ContactForm";
-// import ContactList from "./Components/ContactList/ContactList";
-
-// import contacts from "./contacts.json";
+// import ContactsList from "./Components/ContactList/ContactList";
+// import Filter from "./Components/Filter/Filter";
+// import "./App.module.scss";
 
 // class App extends Component {
 //   state = {
-//     contacts: [],
-//   };
-
-//   formSubmitHadler = (data) => {
-//     console.log(data);
+//     contacts: [
+//       { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
+//       { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
+//       { id: "id-3", name: "Eden Clements", number: "645-17-79" },
+//       { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
+//     ],
+//     filter: "",
 //   };
 
 //   handleAddContact = (newContact) =>
@@ -23,17 +25,47 @@
 
 //     const isExistContact = !!contacts.find((contact) => contact.name === name);
 
-//     isExistContact && alert("Contact is already exist");
+//     isExistContact && alert(`${name} is already exist`);
 
 //     return !isExistContact;
 //   };
 
+//   handleRemoveContact = (id) =>
+//     this.setState(({ contacts }) => ({
+//       contacts: contacts.filter((contact) => contact.id !== id),
+//     }));
+
+//   handleFilterChange = (filter) => this.setState({ filter });
+
+//   getVisibleContacts = () => {
+//     const { contacts, filter } = this.state;
+
+//     return contacts.filter((contact) =>
+//       contact.name.toLowerCase().includes(filter.toLowerCase())
+//     );
+//   };
+
 //   render() {
+//     const { filter } = this.state;
+//     const visibleContacts = this.getVisibleContacts();
+
+//     const contactItem = this.state.contacts;
+//     localStorage.setItem("contactsItem", JSON.stringify(contactItem));
+
 //     return (
 //       <>
-//         <ContactForm onSubmit={this.formSubmitHadler} />
-//         {/* <ContactForm onAdd={this.handleAddContact} /> */}
-//         <ContactList onList={contacts} />
+//         <h1>Phonebook</h1>
+//         <ContactForm
+//           onAdd={this.handleAddContact}
+//           onCheck={this.handleCheckContact}
+//         />
+//         <h2>Contacts</h2>
+//         <p>Find contacts by name</p>
+//         <Filter filter={filter} onChange={this.handleFilterChange} />
+//         <ContactsList
+//           contacts={visibleContacts}
+//           onRemove={this.handleRemoveContact}
+//         />
 //       </>
 //     );
 //   }
@@ -41,32 +73,31 @@
 
 // export default App;
 
-//=================================================================================================================================
-import React, { Component } from "react";
+//===============================================================
+
+import { useState, useEffect } from "react";
 import ContactForm from "./Components/ContactForm/ContactForm";
 import ContactsList from "./Components/ContactList/ContactList";
 import Filter from "./Components/Filter/Filter";
 import "./App.module.scss";
 
-class App extends Component {
-  state = {
-    contacts: [
-      { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-      { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-      { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-      { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-    ],
-    filter: "",
-  };
+export default function App() {
+  const [contacts, setContacts] = useState([
+    { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
+    { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
+    { id: "id-3", name: "Eden Clements", number: "645-17-79" },
+    { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
+  ]);
+  const [filter, setFilter] = useState("");
 
-  handleAddContact = (newContact) =>
-    this.setState(({ contacts }) => ({
-      contacts: [...contacts, newContact],
-    }));
+  useEffect(() => {
+    localStorage.setItem("contactsItem", JSON.stringify(contacts));
+  }, [contacts]);
 
-  handleCheckContact = (name) => {
-    const { contacts } = this.state;
+  const handleAddContact = (newContact) =>
+    setContacts((contacts) => [...contacts, newContact]);
 
+  const handleCheckContact = (name) => {
     const isExistContact = !!contacts.find((contact) => contact.name === name);
 
     isExistContact && alert(`${name} is already exist`);
@@ -74,45 +105,26 @@ class App extends Component {
     return !isExistContact;
   };
 
-  handleRemoveContact = (id) =>
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter((contact) => contact.id !== id),
-    }));
+  const handleRemoveContact = (id) =>
+    setContacts((contacts) => contacts.filter((contact) => contact.id !== id));
 
-  handleFilterChange = (filter) => this.setState({ filter });
+  const handleFilterChange = (filter) => setFilter(filter);
 
-  getVisibleContacts = () => {
-    const { contacts, filter } = this.state;
-
-    return contacts.filter((contact) =>
+  const getVisibleContacts = () =>
+    contacts.filter((contact) =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
-  };
 
-  render() {
-    const { filter } = this.state;
-    const visibleContacts = this.getVisibleContacts();
+  const visibleContacts = getVisibleContacts();
 
-    const contactItem = this.state.contacts;
-    localStorage.setItem("contactsItem", JSON.stringify(contactItem));
-
-    return (
-      <>
-        <h1>Phonebook</h1>
-        <ContactForm
-          onAdd={this.handleAddContact}
-          onCheck={this.handleCheckContact}
-        />
-        <h2>Contacts</h2>
-        <p>Find contacts by name</p>
-        <Filter filter={filter} onChange={this.handleFilterChange} />
-        <ContactsList
-          contacts={visibleContacts}
-          onRemove={this.handleRemoveContact}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <h1>Phonebook</h1>
+      <ContactForm onAdd={handleAddContact} onCheck={handleCheckContact} />
+      <h2>Contacts</h2>
+      <p>Find contacts by name</p>
+      <Filter filter={filter} onChange={handleFilterChange} />
+      <ContactsList contacts={visibleContacts} onRemove={handleRemoveContact} />
+    </>
+  );
 }
-
-export default App;

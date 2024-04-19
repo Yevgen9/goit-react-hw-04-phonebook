@@ -86,66 +86,48 @@
 
 //===================================================================
 
+import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import s from "./ContactForm.module.scss";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
-export default function ContactForm({ onSubmit }) {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
+const INITIAL_STATE = {
+  name: "",
+  number: "",
+};
 
-  const handleChangeName = (e) => {
-    setName(e.target.value);
-  };
+export default function ContactForm({ onAdd, onCheck }) {
+  const [form, setForm] = useState(INITIAL_STATE);
 
-  const handleChangeNumber = (e) => {
-    setNumber(e.target.value);
+  const handleChangeForm = ({ target }) => {
+    const { name, value } = target;
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const { onAdd } = this.props;
+    const { name, number } = form;
 
     const isValidatedForm = validateForm();
-
     if (!isValidatedForm) return;
 
     onAdd({ id: nanoid(), name, number });
 
-    onSubmit(name);
-    setName("");
-
-    onSubmit(number);
-    setNumber("");
-
-    // resetForm();
+    resetForm();
   };
 
   const validateForm = () => {
-    const { onCheck } = this.props;
-
+    const { name, number } = form;
     if (!name || !number) {
-      toast.warn("🦄 Wow so easy!", {
-        position: "top-center",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      alert("Some filed is empty");
       return false;
     }
     return onCheck(name);
   };
 
-  // const resetForm = () => {
-  //   setName("");
-  //   setNumber("");
-  // };
+  const resetForm = () => setForm(INITIAL_STATE);
+
+  const { name, number } = form;
 
   const nameInputId = nanoid();
   const numberInputId = nanoid();
@@ -160,7 +142,7 @@ export default function ContactForm({ onSubmit }) {
           name="name"
           placeholder="Enter text"
           value={name}
-          onChange={handleChangeName}
+          onChange={handleChangeForm}
         />
 
         <p className={s.text}>Number</p>
@@ -170,7 +152,7 @@ export default function ContactForm({ onSubmit }) {
           name="number"
           placeholder="Enter phone number"
           value={number}
-          onChange={handleChangeNumber}
+          onChange={handleChangeForm}
         />
 
         <button className={s.btn} type="submit">
